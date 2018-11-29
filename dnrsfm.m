@@ -8,18 +8,19 @@ K_tot=3;
 nPose = size(W,1)/2;     %Number of frames
 nPts = size(W,2);        %Number of points
 fprintf('number of frames %d number of points %d \n',nPose,nPts);
+
 Wori=W;
 W_k=Wori;
 
 %% Centeralize the measurements
 
 if (sum(sum(H==0))==0)
-    translation = full(mean(W_k,2));
+    translation = full(mean(W_k,2)); % >> I think W_k is sparse so they use full to make it dense
     W = W_k - translation*ones(1,size(W_k,2));
     scale=max(max(abs(W)));
     W=W/scale;
 else
-    
+    % >> If there is missing data, rescale (will rescale to range [0, 1] if all points are positive)
     disp('SfM for finding translation');
     scale=max(max(abs(W_k.*H)));
     Wtmp=W_k/scale;
